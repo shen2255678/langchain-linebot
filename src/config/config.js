@@ -16,38 +16,8 @@ const config = {
     apiKey: process.env.OPENAI_API_KEY,
   },
 
-  // Database Configuration
+  // Database Configuration (Supabase only)
   database: {
-    // MSSQL Configuration - 支援Windows驗證和SQL Server驗證
-    mssql: {
-      server: process.env.MSSQL_SERVER,
-      database: process.env.MSSQL_DATABASE,
-      port: parseInt(process.env.MSSQL_PORT) || 1433,
-      options: {
-        encrypt: true,
-        trustServerCertificate: true,
-        // Windows驗證支援
-        trustedConnection: process.env.MSSQL_TRUSTED_CONNECTION === 'true',
-        // 連線超時設定
-        connectTimeout: 60000,
-        requestTimeout: 60000,
-        // 啟用多重活動結果集
-        enableArithAbort: true,
-      },
-      // 條件性加入使用者認證（只有在不使用Windows驗證時）
-      ...(process.env.MSSQL_TRUSTED_CONNECTION !== 'true' && {
-        user: process.env.MSSQL_USERNAME,
-        password: process.env.MSSQL_PASSWORD,
-      }),
-      // 連線池設定
-      pool: {
-        max: 10,
-        min: 0,
-        idleTimeoutMillis: 30000,
-      },
-    },
-
-    // Supabase Configuration (備用資料庫)
     supabase: {
       url: process.env.SUPABASE_URL,
       anonKey: process.env.SUPABASE_ANON_KEY,
@@ -126,19 +96,11 @@ const validateConfig = () => {
     throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
   }
 
-  // 驗證資料庫設定（至少要有一個）
-  const hasMSSQL = process.env.MSSQL_SERVER && process.env.MSSQL_DATABASE;
+  // 驗證 Supabase 資料庫設定
   const hasSupabase = process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY;
   
-  if (!hasMSSQL && !hasSupabase) {
-    console.warn('Warning: No database configured. Running in limited mode without conversation memory.');
-  }
-
-  // 驗證 MSSQL 設定（如果有設定的話）
-  if (hasMSSQL && process.env.MSSQL_TRUSTED_CONNECTION !== 'true') {
-    if (!process.env.MSSQL_USERNAME || !process.env.MSSQL_PASSWORD) {
-      console.warn('Warning: MSSQL_USERNAME and MSSQL_PASSWORD are required when not using Windows Authentication');
-    }
+  if (!hasSupabase) {
+    console.warn('Warning: Supabase not configured. Running in limited mode without conversation memory.');
   }
 
   // 驗證LINE設定
@@ -162,16 +124,17 @@ const getConfigSummary = () => {
       environment: config.nodeEnv,
     },
     database: {
-      server: config.database.mssql.server,
-      database: config.database.mssql.database,
-      authMethod: config.database.mssql.options.trustedConnection ? 'Windows Authentication' : 'SQL Server Authentication',
-      port: config.database.mssql.port,
+      supabase: !!config.database.supabase.url,
     },
     line: {
       configured: !!(config.line.channelAccessToken && config.line.channelSecret),
     },
     openai: {
       configured: !!config.openai.apiKey,
+    },
+    langchain: {
+      weather: !!config.weather.apiKey,
+      vectorDb: !!config.vectorDb.chromaUrl,
     },
   };
 };

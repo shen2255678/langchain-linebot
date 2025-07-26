@@ -57,21 +57,18 @@ class App {
   async initializeDatabase() {
     this.databaseManager = new DatabaseManager();
     
-    // Try MSSQL first, then Supabase
+    // Initialize Supabase
     try {
-      if (config.database.mssql.server && !config.database.mssql.server.includes('your_')) {
-        await this.databaseManager.initMSSQL();
-        console.log('✅ Connected to MSSQL');
-      } else if (config.database.supabase.url && 
-                 config.database.supabase.serviceRoleKey &&
-                 !config.database.supabase.url.includes('your_supabase_url')) {
+      if (config.database.supabase.url && 
+          config.database.supabase.serviceRoleKey &&
+          !config.database.supabase.url.includes('your_supabase_url')) {
         await this.databaseManager.initSupabase();
         console.log('✅ Connected to Supabase');
       } else {
-        console.warn('⚠️ No database configured, running in limited mode');
+        console.warn('⚠️ Supabase not configured, running in limited mode');
       }
     } catch (error) {
-      console.error('❌ Database connection failed:', error.message);
+      console.error('❌ Supabase connection failed:', error.message);
       console.warn('⚠️ Running without database - conversation memory will be limited');
     }
   }

@@ -19,7 +19,6 @@
     "@langchain/core": "^0.1.62",
     "@langchain/openai": "^0.0.28",
     "@langchain/community": "^0.0.54",
-    "mssql": "^10.0.1",
     "@supabase/supabase-js": "^2.38.0",
     "axios": "^1.6.0",
     "uuid": "^9.0.1"
