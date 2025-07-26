@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(npm run setup:*)",
+      "Bash(npm install:*)",
+      "Bash(npm test)",
+      "Bash(npm run dev:*)",
+      "Bash(timeout 5 npm start)",
+      "Bash(timeout:*)",
+      "Bash(node:*)",
+      "Bash(npm run check-config:*)",
+      "Bash(services.msc)",
+      "Bash(sqlcmd:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd //c:*)",
+      "Bash(npm start)",
+      "Bash(ngrok:*)",
+      "Bash(start /B npm start)",
+      "Bash(dir:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": []
+  }
+}
